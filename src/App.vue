@@ -5,7 +5,7 @@
       <input :disabled="this.answerSubmitted" type="radio" name="options" :value="answer" v-model="this.chosenAnswer">
       <label v-html="answer"></label><br>
     </div>
-    <button type="submit">Send</button>
+    <button @click="this.submitAnswer()" class="send" type="button">Send</button>
   </div>
   
 </template>
@@ -38,7 +38,18 @@
     },
 
     methods: {
-
+      submitAnswer() {
+        if(!this.chosenAnswer) {
+          alert('Select one of the options bellow!');
+        } else {
+          this.answerSubmitted = true;
+          if(this.chosenAnswer == this.correctAnswer) {
+            console.log('You got it!');
+          } else {
+            console.log('Wrong Answer!');
+          }
+        }
+      },
       getNewQuestion() {
         this.answerSubmitted = false; // redefinir a resposta enviada e tirar a section
         this.chosenAnswer = undefined;
