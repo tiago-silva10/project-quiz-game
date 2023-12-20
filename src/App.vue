@@ -1,11 +1,9 @@
-<template>
+<template v-if="this.question">
   <div>
-    <h1>Welcome</h1>
-    <div>
-      <input type="radio" name="options">
-      <label>Answer</label><br>
-      <input type="radio" name="options">
-      <label>Answer</label><br>
+    <h1 v-html="this.question"></h1>
+    <div v-for="(answer, index) in this.answers" v-bind:key="index">
+      <input :disabled="this.answerSubmitted" type="radio" name="options" :value="answer" v-model="this.chosenAnswer">
+      <label v-html="answer"></label><br>
     </div>
     <button type="submit">Send</button>
   </div>
@@ -14,44 +12,78 @@
 
 <script>
 
-export default {
-  name: 'App',
+  export default {
+    name: 'App',
 
-  components: {
+    components: {
 
+    },
+
+    data() {
+      return {
+        question: undefined,
+        incorrectAnswer: undefined,
+        correctAnswer: undefined,
+        chosenAnswer: undefined,
+        answerSubmitted: false
+      }
+    },
+
+    computed: {
+      answers() {
+        var answers = JSON.parse(JSON.stringify(this.incorrectAnswers));
+          answers.splice(Math.round(Math.random() * answers.length), 0, this.correctAnswer);
+          return answers;
+      }
+    },
+
+    methods: {
+
+      getNewQuestion() {
+        this.answerSubmitted = false; // redefinir a resposta enviada e tirar a section
+        this.chosenAnswer = undefined;
+        this.question = undefined;
+
+        this.axios.get('https://opentdb.com/api.php?amount=20').then((response) => {
+          this.question = response.data.results[0].question;
+          this.incorrectAnswers = response.data.results[0].incorrect_answers;
+          this.correctAnswer = response.data.results[0].correct_answer;
+        })
+      }
+    },
+
+    created() {
+      this.getNewQuestion();
+    }
   }
-
-}
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  text-align: center;
-  color: black;
-  margin: 60px auto;
-  max-width: 600px;
-}
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    text-align: center;
+    color: black;
+    margin: 60px auto;
+    max-width: 600px;
+  }
 
-input {
-    margin: 10px;
-}
+  input {
+      margin: 10px;
+  }
 
- button {
-    margin-top: 10px;
-    background-color: white; 
-    color: black; 
-    border: 2px solid #008CBA;
-    border-radius: 4px;
-    padding: 5px 24px;
-}
+  button {
+      margin-top: 10px;
+      background-color: white; 
+      color: black; 
+      border: 2px solid #008CBA;
+      border-radius: 4px;
+      padding: 5px 24px;
+  }
 
-button:hover {
-    background-color: #008CBA;
-    color: white;
-    cursor: pointer;
-}
-
-
+  button:hover {
+      background-color: #008CBA;
+      color: white;
+      cursor: pointer;
+  }
 
 </style>
