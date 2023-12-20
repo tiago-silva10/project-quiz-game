@@ -6,7 +6,7 @@
       <input :disabled="this.answerSubmitted" type="radio" name="options" :value="answer" v-model="this.chosenAnswer">
       <label v-html="answer"></label><br>
     </div>
-    <button @click="this.submitAnswer()" class="send" type="button">Send</button>
+    <button v-if="!this.answerSubmitted" @click="this.submitAnswer()" class="send" type="button">Send</button>
     <AnswerComponent />
   </div>
   
@@ -27,7 +27,7 @@
     data() {
       return {
         question: undefined,
-        incorrectAnswer: undefined,
+        incorrectAnswers: undefined,
         correctAnswer: undefined,
         chosenAnswer: undefined,
         answerSubmitted: false,
