@@ -1,22 +1,27 @@
 <template v-if="this.question">
   <div>
+    <ScoreBoard :winCount="this.winCount" :loseCount="this.loseCount" />
     <h1 v-html="this.question"></h1>
     <div v-for="(answer, index) in this.answers" v-bind:key="index">
       <input :disabled="this.answerSubmitted" type="radio" name="options" :value="answer" v-model="this.chosenAnswer">
       <label v-html="answer"></label><br>
     </div>
     <button @click="this.submitAnswer()" class="send" type="button">Send</button>
+    <AnswerComponent />
   </div>
   
 </template>
 
 <script>
-
+  import ScoreBoard from '@/components/ScoreBoard.vue'
+  import AnswerComponent from '@/components/AnswerComponent.vue'
+  
   export default {
     name: 'App',
 
     components: {
-
+      ScoreBoard,
+      AnswerComponent
     },
 
     data() {
@@ -25,15 +30,17 @@
         incorrectAnswer: undefined,
         correctAnswer: undefined,
         chosenAnswer: undefined,
-        answerSubmitted: false
+        answerSubmitted: false,
+        winCount: 0,
+        loseCount: 0
       }
     },
 
     computed: {
       answers() {
         var answers = JSON.parse(JSON.stringify(this.incorrectAnswers));
-          answers.splice(Math.round(Math.random() * answers.length), 0, this.correctAnswer);
-          return answers;
+        answers.splice(Math.round(Math.random() * answers.length), 0, this.correctAnswer);
+        return answers;
       }
     },
 
@@ -44,9 +51,9 @@
         } else {
           this.answerSubmitted = true;
           if(this.chosenAnswer == this.correctAnswer) {
-            console.log('You got it!');
+            this.winCount++;
           } else {
-            console.log('Wrong Answer!');
+            this.loseCount++;
           }
         }
       },
